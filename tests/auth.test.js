@@ -1,0 +1,2 @@
+const test=require('node:test'); const assert=require('node:assert/strict'); const request=require('supertest'); const app=require('../server');
+test('register and login work with hashed passwords',async()=>{const agent=request.agent(app);const username='user_'+Date.now();let r=await agent.post('/api/auth/register').send({username,password:'secret123'});assert.equal(r.status,201);r=await agent.get('/api/auth/me');assert.equal(r.body.username,username);r=await agent.post('/api/auth/login').send({username,password:'wrong'});assert.equal(r.status,401)});

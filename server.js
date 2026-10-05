@@ -1,0 +1,15 @@
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+require('./database');
+const authRoutes = require('./routes/auth');
+const taskRoutes = require('./routes/tasks');
+const app = express();
+app.use(express.json());
+app.use(session({ secret: process.env.SESSION_SECRET || 'development-only-secret', resave: false, saveUninitialized: false, cookie: { httpOnly: true, sameSite: 'lax' } }));
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
+if (require.main === module) app.listen(process.env.PORT || 3000, () => console.log(`To-do app running at http://localhost:${process.env.PORT || 3000}`));
+module.exports = app;
